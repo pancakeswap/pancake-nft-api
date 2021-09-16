@@ -1,5 +1,7 @@
-export const CONTENT_DELIVERY_NETWORK_URI =
-  process.env.CONTENT_DELIVERY_NETWORK_URI ?? "https://static-nft.pancakeswap.com";
+import { getAddress } from "ethers/lib/utils";
+
+const NETWORK = process.env.NETWORK ?? "testnet";
+const CONTENT_DELIVERY_NETWORK_URI = process.env.CONTENT_DELIVERY_NETWORK_URI ?? "https://static-nft.pancakeswap.com";
 
 export const getTokenURI = (tokenURI: string): string => {
   if (tokenURI && tokenURI.startsWith("ipfs://")) {
@@ -7,4 +9,17 @@ export const getTokenURI = (tokenURI: string): string => {
   }
 
   return tokenURI;
+};
+
+export const getCDN = (address: string, type: "avatar" | "banner-lg" | "banner-sm"): string => {
+  switch (type) {
+    case "avatar":
+      return `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/avatar.png`;
+    case "banner-lg":
+      return `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/banner-lg.png`;
+    case "banner-sm":
+      return `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/banner-sm.png`;
+    default:
+      return `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/unknown.png`;
+  }
 };

@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { getAddress, isAddress } from "ethers/lib/utils";
-import { CONTENT_DELIVERY_NETWORK_URI } from "../../../utils";
+import { getCDN } from "../../../utils";
 import { getModel } from "../../../utils/mongo";
 import { Attribute, Collection } from "../../../utils/types";
 
@@ -36,10 +36,10 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         verified: collection.verified,
         createdAt: collection.created_at,
         updatedAt: collection.updated_at,
-        avatar: `${CONTENT_DELIVERY_NETWORK_URI}/testnet/${address}/avatar.png`,
+        avatar: getCDN(collection.address, "avatar"),
         banner: {
-          large: `${CONTENT_DELIVERY_NETWORK_URI}/testnet/${address}/banner-lg.png`,
-          small: `${CONTENT_DELIVERY_NETWORK_URI}/testnet/${address}/banner-sm.png`,
+          large: getCDN(collection.address, "banner-lg"),
+          small: getCDN(collection.address, "banner-sm"),
         },
         attributes: attributes
           ? attributes.map((attribute: Attribute) => ({
