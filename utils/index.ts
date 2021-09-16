@@ -1,10 +1,10 @@
 export const CONTENT_DELIVERY_NETWORK_URI =
   process.env.CONTENT_DELIVERY_NETWORK_URI ?? "https://static-nft.pancakeswap.com";
 
-export const getTokenURI = (tokenUri: string): string => {
-  if (tokenUri.startsWith("ipfs://")) {
-    return `https://cloudflare-ipfs.com/ipfs/${tokenUri.slice(7)}`;
+export const getTokenURI = (tokenURI: string): string => {
+  if (tokenURI && tokenURI.startsWith("ipfs://")) {
+    return `https://ipfs.io/ipfs/${tokenURI.slice(7)}`;
   }
 
-  return tokenUri;
+  return tokenURI;
 };

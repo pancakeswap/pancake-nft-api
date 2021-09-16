@@ -24,16 +24,15 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
       const { data } = await axios(tokenURI);
 
       const response = {
-        id: "123",
         tokenId: id,
         name: `${data?.name}`,
         description: data?.description,
         image: {
-          original: data?.image ?? null,
-          thumbnail: data?.image ?? null,
-          mp4: data?.mp4_url ?? null,
-          webm: data?.webm_url ?? null,
-          gif: data?.gif_url ?? null,
+          original: getTokenURI(data?.image) ?? null,
+          thumbnail: getTokenURI(data?.image) ?? null,
+          mp4: getTokenURI(data?.mp4_url) ?? null,
+          webm: getTokenURI(data?.webm_url) ?? null,
+          gif: getTokenURI(data?.gif_url) ?? null,
         },
         attributes: [
           {
@@ -45,7 +44,8 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
 
       return res.status(200).json({ data: response });
     } catch (error) {
-      return res.status(400).json({ error: { message: "Invalid address." } });
+      console.log(error);
+      return res.status(500).json({ error: { message: "Unknown error." } });
     }
   }
 
