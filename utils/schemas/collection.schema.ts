@@ -4,6 +4,9 @@ const collectionSchema: Schema = new Schema(
   {
     address: {
       type: String,
+      index: {
+        unique: true,
+      },
       required: true,
     },
     owner: {

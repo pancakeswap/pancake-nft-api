@@ -1,7 +1,11 @@
 import { Schema } from "mongoose";
 
-const tokenSchema: Schema = new Schema(
+const metadataSchema: Schema = new Schema(
   {
+    parent_collection: {
+      type: Schema.Types.ObjectId,
+      ref: "Collection",
+    },
     name: {
       type: String,
       required: true,
@@ -16,12 +20,12 @@ const tokenSchema: Schema = new Schema(
     },
     updated_at: {
       type: Date,
-      default: null,
+      default: Date.now,
     },
   },
   {
-    collection: "tokens",
+    collection: "metadata",
   }
 );
 
-export default tokenSchema;
+export default metadataSchema;

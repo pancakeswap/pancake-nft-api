@@ -1,5 +1,7 @@
 import mongoose, { Connection, Model } from "mongoose";
+import attributeSchema from "./schemas/attribute.schema";
 import collectionSchema from "./schemas/collection.schema";
+import metadataSchema from "./schemas/metadata.schema";
 import tokenSchema from "./schemas/token.schema";
 
 let connection: Connection | null = null;
@@ -23,6 +25,8 @@ export const getConnection = async (): Promise<Connection> => {
     await connection;
     connection.model("Collection", collectionSchema);
     connection.model("Token", tokenSchema);
+    connection.model("Metadata", metadataSchema);
+    connection.model("Attribute", attributeSchema);
   }
 
   return connection;

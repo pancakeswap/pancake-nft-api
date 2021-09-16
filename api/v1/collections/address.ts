@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import { getAddress, isAddress } from "ethers/lib/utils";
 import { CONTENT_DELIVERY_NETWORK_URI } from "../../../utils";
 import { getModel } from "../../../utils/mongo";
-import { Collection } from "../../../utils/types";
+import { Attribute, Collection } from "../../../utils/types";
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
   if (req.method?.toUpperCase() === "OPTIONS") {
@@ -21,6 +21,9 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         return res.status(404).json({ error: { message: "Entity not found." } });
       }
 
+      const attributeModel = await getModel("Attribute");
+      const attributes: Attribute[] = await attributeModel.find({ parent_collection: collection }).exec();
+
       address = getAddress(address);
 
       return res.status(200).json({
@@ -38,6 +41,13 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
           large: `${CONTENT_DELIVERY_NETWORK_URI}/testnet/${address}/banner-lg.png`,
           small: `${CONTENT_DELIVERY_NETWORK_URI}/testnet/${address}/banner-sm.png`,
         },
+        attributes: attributes
+          ? attributes.map((attribute: Attribute) => ({
+              traitType: attribute.trait_type,
+              value: attribute.value,
+              displayType: attribute.display_type,
+            }))
+          : [],
       });
     } catch (error) {
       return res.status(500).json({ error: { message: "Invalid address." } });
