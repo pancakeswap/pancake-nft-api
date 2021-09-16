@@ -14,7 +14,6 @@ export interface Collection extends Document {
 
 export interface Token extends Document {
   parent_collection: Collection;
-  address: string;
   name: string;
   description: string;
   metadata: Metadata;

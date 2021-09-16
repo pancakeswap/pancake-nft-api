@@ -3,6 +3,7 @@ import { getAddress, isAddress } from "ethers/lib/utils";
 import { Attribute, Token } from "../../../../utils/types";
 import { getModel } from "../../../../utils/mongo";
 import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils";
+import { Collection } from "mongoose";
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
   if (req.method?.toUpperCase() === "OPTIONS") {
@@ -16,9 +17,15 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
   // Sanity check for address; to avoid any SQL-like injections, ...
   if (address && isAddress(address) && id) {
     try {
+      const collectionModel = await getModel("Collection");
+      const collection: Collection = await collectionModel.findOne({ address: address.toLowerCase() }).exec();
+      if (!collection) {
+        return res.status(404).json({ error: { message: "Entity not found." } });
+      }
+
       const tokenModel = await getModel("Token");
       const token: Token = await tokenModel
-        .findOne({ address: address.toLowerCase(), token_id: id.toLowerCase() })
+        .findOne({ parent_collection: collection, token_id: id.toLowerCase() })
         .populate(["parent_collection", "metadata", "attributes"])
         .exec();
       if (!token) {

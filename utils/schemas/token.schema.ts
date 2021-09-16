@@ -6,11 +6,6 @@ const tokenSchema: Schema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Collection",
     },
-    // Note: Temporary workaround (true)
-    address: {
-      type: String,
-      required: true,
-    },
     token_id: {
       type: String,
       required: true,
