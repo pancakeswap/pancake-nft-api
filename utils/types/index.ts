@@ -13,8 +13,12 @@ export interface Collection extends Document {
 }
 
 export interface Token extends Document {
+  parent_collection: Collection;
+  address: string;
   name: string;
   description: string;
+  metadata: Metadata;
+  attributes: Attribute[];
   created_at: Date;
   updated_at: Date;
 }

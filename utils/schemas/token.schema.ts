@@ -2,14 +2,29 @@ import { Schema } from "mongoose";
 
 const tokenSchema: Schema = new Schema(
   {
-    name: {
+    parent_collection: {
+      type: Schema.Types.ObjectId,
+      ref: "Collection",
+    },
+    // Note: Temporary workaround (true)
+    address: {
       type: String,
       required: true,
     },
-    description: {
+    token_id: {
       type: String,
       required: true,
     },
+    metadata: {
+      type: Schema.Types.ObjectId,
+      ref: "Metadata",
+    },
+    attributes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Attribute",
+      },
+    ],
     created_at: {
       type: Date,
       default: Date.now,

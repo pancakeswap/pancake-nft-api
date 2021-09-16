@@ -1,7 +1,8 @@
 import { getAddress } from "ethers/lib/utils";
 
-const NETWORK = process.env.NETWORK ?? "testnet";
-const CONTENT_DELIVERY_NETWORK_URI = process.env.CONTENT_DELIVERY_NETWORK_URI ?? "https://static-nft.pancakeswap.com";
+export const NETWORK = process.env.NETWORK ?? "testnet";
+export const CONTENT_DELIVERY_NETWORK_URI =
+  process.env.CONTENT_DELIVERY_NETWORK_URI ?? "https://static-nft.pancakeswap.com";
 
 export const getTokenURI = (tokenURI: string): string => {
   if (tokenURI && tokenURI.startsWith("ipfs://")) {

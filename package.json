@@ -13,7 +13,6 @@
     "prepare": "husky install"
   },
   "dependencies": {
-    "axios": "^0.21.0",
     "ethers": "^5.4.0",
     "mongoose": "^5.13.0"
   },

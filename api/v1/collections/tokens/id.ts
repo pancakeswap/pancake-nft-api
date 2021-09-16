@@ -1,10 +1,8 @@
-import { Contract } from "@ethersproject/contracts";
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { isAddress } from "ethers/lib/utils";
-import axios from "axios";
-import provider from "../../../../utils/provider";
-import ercABI from "../../../../utils/abis/ERC721.json";
-import { getTokenURI } from "../../../../utils";
+import { getAddress, isAddress } from "ethers/lib/utils";
+import { Attribute, Token } from "../../../../utils/types";
+import { getModel } from "../../../../utils/mongo";
+import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils";
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
   if (req.method?.toUpperCase() === "OPTIONS") {
@@ -16,33 +14,45 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
   id = id as string;
 
   // Sanity check for address; to avoid any SQL-like injections, ...
-  if (id && address && isAddress(address)) {
+  if (address && isAddress(address) && id) {
     try {
-      const contract = new Contract(address, ercABI, provider);
-      const tokenURI = await getTokenURI(await contract.tokenURI(id));
+      const tokenModel = await getModel("Token");
+      const token: Token = await tokenModel
+        .findOne({ address: address.toLowerCase(), token_id: id.toLowerCase() })
+        .populate(["parent_collection", "metadata", "attributes"])
+        .exec();
+      if (!token) {
+        return res.status(404).json({ error: { message: "Entity not found." } });
+      }
 
-      const { data } = await axios(tokenURI);
-
-      const response = {
+      const data = {
         tokenId: id,
-        name: `${data?.name}`,
-        description: data?.description,
+        name: token.metadata.name,
+        description: token.metadata.description,
         image: {
-          original: getTokenURI(data?.image) ?? null,
-          thumbnail: getTokenURI(data?.image) ?? null,
-          mp4: getTokenURI(data?.mp4_url) ?? null,
-          webm: getTokenURI(data?.webm_url) ?? null,
-          gif: getTokenURI(data?.gif_url) ?? null,
+          original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
+            address
+          )}/${token.metadata.name.toLowerCase()}.png`,
+          thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
+            address
+          )}/${token.metadata.name.toLowerCase()}.png`,
+          mp4: null,
+          webm: null,
+          gif: null,
         },
-        attributes: [
-          {
-            traitType: "bunnyId",
-            value: data?.attributes?.bunnyId,
-          },
-        ],
+        attributes: token.attributes
+          ? token.attributes.map((attribute: Attribute) => ({
+              traitType: attribute.trait_type,
+              value: attribute.value,
+              displayType: attribute.display_type,
+            }))
+          : [],
+        collection: {
+          name: token.parent_collection.name,
+        },
       };
 
-      return res.status(200).json({ data: response });
+      return res.status(200).json({ data });
     } catch (error) {
       console.log(error);
       return res.status(500).json({ error: { message: "Unknown error." } });

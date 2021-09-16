@@ -22,11 +22,14 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
       }
 
       const attributeModel = await getModel("Attribute");
-      const attributes: Attribute[] = await attributeModel.find({ parent_collection: collection }).exec();
+      const attributes: Attribute[] = await attributeModel
+        .find({ parent_collection: collection })
+        .sort({ trait_type: "asc", value: "asc" })
+        .exec();
 
       address = getAddress(address);
 
-      return res.status(200).json({
+      const data = {
         address: address,
         owner: getAddress(collection.owner),
         name: collection.name,
@@ -48,9 +51,11 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
               displayType: attribute.display_type,
             }))
           : [],
-      });
+      };
+
+      return res.status(200).json({ data });
     } catch (error) {
-      return res.status(500).json({ error: { message: "Invalid address." } });
+      return res.status(500).json({ error: { message: "Unknown error." } });
     }
   }
 
