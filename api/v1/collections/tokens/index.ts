@@ -1,119 +1,130 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { isAddress } from "ethers/lib/utils";
+import { isAddress, getAddress } from "ethers/lib/utils";
+import _ from "lodash";
+import { Collection } from "mongoose";
+import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils";
+import { Attribute, Token } from "../../../../utils/types";
+import { getModel } from "../../../../utils/mongo";
+
+const formatGenericList = (tokens: Token[], address: string) => {
+  let data = {};
+  const attributesDistribution: { [key: string]: { [key: string]: number } } = {};
+  tokens.forEach((token) => {
+    data = {
+      ...data,
+      [token.token_id]: {
+        tokenId: token.token_id,
+        name: token.metadata.name,
+        description: token.metadata.description,
+        image: {
+          original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
+            address
+          )}/${token.metadata.name.toLowerCase()}.png`,
+          thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
+            address
+          )}/${token.metadata.name.toLowerCase()}.png`,
+          mp4: null,
+          webm: null,
+          gif: null,
+        },
+        attributes: token.attributes
+          ? token.attributes.map((attribute: Attribute) => ({
+              traitType: attribute.trait_type,
+              value: attribute.value,
+              displayType: attribute.display_type,
+            }))
+          : [],
+        collection: {
+          name: token.parent_collection.name,
+        },
+      },
+    };
+
+    // update the attributesDistribution distribution according to this token attributes
+    token.attributes.forEach((attribute) => {
+      const traitType = attribute.trait_type;
+      const traitValue = attribute.value;
+      // Safe checks on the object structure
+      if (!_.get(attributesDistribution, traitType)) {
+        attributesDistribution[traitType] = {};
+      }
+      if (!_.get(attributesDistribution, [traitType, traitValue])) {
+        attributesDistribution[traitType][traitValue] = 0;
+      }
+
+      attributesDistribution[traitType][traitValue] += 1;
+    });
+  }); // End forEach
+  return { data, attributesDistribution };
+};
+
+const formatPb = (tokens: Token[], address: string) => {
+  let data: { [key: string]: any } = {};
+  tokens.forEach((token) => {
+    const bunnyId = token.attributes[0].value;
+    const exist = !!data[bunnyId];
+
+    if (exist) {
+      data[bunnyId].tokens.push(bunnyId);
+    } else {
+      data = {
+        ...data,
+        [bunnyId]: {
+          tokenId: token.token_id,
+          name: token.metadata.name,
+          description: token.metadata.description,
+          image: {
+            original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
+              address
+            )}/${token.metadata.name.toLowerCase()}.png`,
+            thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
+              address
+            )}/${token.metadata.name.toLowerCase()}.png`,
+            mp4: null,
+            webm: null,
+            gif: null,
+          },
+          collection: {
+            name: token.parent_collection.name,
+          },
+          tokens: [token.token_id],
+        },
+      };
+    }
+  }); // End forEach
+  const attributesDistribution = _.reduce(data, (acc, value, index) => ({ ...acc, [index]: value.tokens.length }), {});
+  return { data, attributesDistribution: attributesDistribution };
+};
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
   if (req.method?.toUpperCase() === "OPTIONS") {
     return res.status(204).end();
   }
 
-  let { address } = req.query;
-  address = address as string;
+  const address = req.query.address as string;
 
   // Sanity check for address; to avoid any SQL-like injections, ...
   if (address && isAddress(address)) {
-    const data = {
-      "0": {
-        name: "Swapsies",
-        description: "These bunnies love nothing more than swapping pancakes. Especially on BSC.",
-        image: {
-          original: "https://cloudflare-ipfs.com/ipfs/QmaTV3X9SV6ZrDNVCTkQUs3JQRew8iFFyJCTBoaGAFHDL9/swapsies-blur.png",
-          thumbnail:
-            "https://cloudflare-ipfs.com/ipfs/QmaTV3X9SV6ZrDNVCTkQUs3JQRew8iFFyJCTBoaGAFHDL9/swapsies-blur.png",
-          mp4: null,
-          webm: null,
-          gif: null,
-        },
-        tokens: [3],
-      },
-      "1": {
-        name: "Drizzle",
-        description: "It's raining syrup on this bunny, but he doesn't seem to mind. Can you blame him?",
-        image: {
-          original: "https://cloudflare-ipfs.com/ipfs/QmaTV3X9SV6ZrDNVCTkQUs3JQRew8iFFyJCTBoaGAFHDL9/drizzle-blur.png",
-          thumbnail: "https://cloudflare-ipfs.com/ipfs/QmaTV3X9SV6ZrDNVCTkQUs3JQRew8iFFyJCTBoaGAFHDL9/drizzle-blur.png",
-          mp4: null,
-          webm: null,
-          gif: null,
-        },
-        tokens: [2],
-      },
-      "2": {
-        name: "Blueberries",
-        description: "These bunnies like their pancakes with blueberries. What's your favorite topping?",
-        image: {
-          original:
-            "https://cloudflare-ipfs.com/ipfs/QmaTV3X9SV6ZrDNVCTkQUs3JQRew8iFFyJCTBoaGAFHDL9/blueberries-blur.png",
-          thumbnail:
-            "https://cloudflare-ipfs.com/ipfs/QmaTV3X9SV6ZrDNVCTkQUs3JQRew8iFFyJCTBoaGAFHDL9/blueberries-blur.png",
-          mp4: null,
-          webm: null,
-          gif: null,
-        },
-        tokens: [4],
-      },
-      "3": {
-        name: "Circular",
-        description: "Love makes the world go ‘round... but so do pancakes. And these bunnies know it.",
-        image: {
-          original: "https://cloudflare-ipfs.com/ipfs/QmaTV3X9SV6ZrDNVCTkQUs3JQRew8iFFyJCTBoaGAFHDL9/circular-blur.png",
-          thumbnail:
-            "https://cloudflare-ipfs.com/ipfs/QmaTV3X9SV6ZrDNVCTkQUs3JQRew8iFFyJCTBoaGAFHDL9/circular-blur.png",
-          mp4: null,
-          webm: null,
-          gif: null,
-        },
-        tokens: [0],
-      },
-      "10": {
-        name: "Hiccup",
-        description: "Oopsie daisy! Hiccup's had a bit of an accident. Poor little fella.",
-        image: {
-          original: "https://cloudflare-ipfs.com/ipfs/QmQ6EE6gkVzAQUdQLLM7CyrnME6LZHCoy92ZERW8HXmyjw/hiccup.png",
-          thumbnail: "https://cloudflare-ipfs.com/ipfs/QmQ6EE6gkVzAQUdQLLM7CyrnME6LZHCoy92ZERW8HXmyjw/hiccup.png",
-          mp4: null,
-          webm: null,
-          gif: null,
-        },
-        tokens: [80],
-      },
-      "11": {
-        name: "Hiccup",
-        description: "Oopsie daisy! Hiccup's had a bit of an accident. Poor little fella.",
-        image: {
-          original: "https://cloudflare-ipfs.com/ipfs/QmNS1A5HsRW1JvFWtGkm4o9TgZVe2P7kA8TB4yxvS6A7ms/bullish.png",
-          thumbnail: "https://cloudflare-ipfs.com/ipfs/QmNS1A5HsRW1JvFWtGkm4o9TgZVe2P7kA8TB4yxvS6A7ms/bullish.png",
-          mp4: "https://ipfs.io/ipfs/QmNS1A5HsRW1JvFWtGkm4o9TgZVe2P7kA8TB4yxvS6A7ms/bullish.mp4",
-          webm: "https://ipfs.io/ipfs/QmNS1A5HsRW1JvFWtGkm4o9TgZVe2P7kA8TB4yxvS6A7ms/bullish.webm",
-          gif: "https://ipfs.io/ipfs/QmNS1A5HsRW1JvFWtGkm4o9TgZVe2P7kA8TB4yxvS6A7ms/bullish.gif",
-        },
-        tokens: [79],
-      },
-      "18": {
-        name: "Baller",
-        description: "Absolute (lottery) baller.",
-        image: {
-          original: "https://cloudflare-ipfs.com/ipfs/QmWnhyxSrD8v9bx5tE9mDkwW853bpjoCXGd7o2fe1BtQJ8/lottie.png",
-          thumbnail: "https://cloudflare-ipfs.com/ipfs/QmWnhyxSrD8v9bx5tE9mDkwW853bpjoCXGd7o2fe1BtQJ8/lottie.png",
-          mp4: "https://ipfs.io/ipfs/QmWnhyxSrD8v9bx5tE9mDkwW853bpjoCXGd7o2fe1BtQJ8/lottie.mp4",
-          webm: "https://ipfs.io/ipfs/QmWnhyxSrD8v9bx5tE9mDkwW853bpjoCXGd7o2fe1BtQJ8/lottie.webm",
-          gif: "https://ipfs.io/ipfs/QmWnhyxSrD8v9bx5tE9mDkwW853bpjoCXGd7o2fe1BtQJ8/lottie.gif",
-        },
-        tokens: [121],
-      },
-      "20": {
-        name: "Baller",
-        description: "Absolute (lottery) baller.",
-        image: {
-          original: "https://cloudflare-ipfs.com/ipfs/QmeMfJk6yxYmMd41ThDpqcdEJmKXZTF9EmFeP49D15NvsF/baller.png",
-          thumbnail: "https://cloudflare-ipfs.com/ipfs/QmeMfJk6yxYmMd41ThDpqcdEJmKXZTF9EmFeP49D15NvsF/baller.png",
-          mp4: "https://ipfs.io/ipfs/QmeMfJk6yxYmMd41ThDpqcdEJmKXZTF9EmFeP49D15NvsF/baller.mp4",
-          webm: "https://ipfs.io/ipfs/QmeMfJk6yxYmMd41ThDpqcdEJmKXZTF9EmFeP49D15NvsF/baller.webm",
-          gif: "https://ipfs.io/ipfs/QmeMfJk6yxYmMd41ThDpqcdEJmKXZTF9EmFeP49D15NvsF/baller.gif",
-        },
-        tokens: [122],
-      },
-    };
-    return res.status(200).json({ total: 8, data });
+    const collectionModel = await getModel("Collection");
+    const collection: Collection = await collectionModel.findOne({ address: address.toLowerCase() }).exec();
+    if (!collection) {
+      return res.status(404).json({ error: { message: "Entity not found." } });
+    }
+
+    const tokenModel = await getModel("Token");
+    const tokens: Token[] = await tokenModel
+      .find({ parent_collection: collection })
+      .populate(["parent_collection", "metadata", "attributes"])
+      .exec();
+    if (tokens.length === 0) {
+      return res.status(404).json({ error: { message: "Entity not found." } });
+    }
+
+    const { data, attributesDistribution } =
+      address === process.env.PANCAKE_BUNNY_ADDRESS ? formatPb(tokens, address) : formatGenericList(tokens, address);
+
+    const total = tokens.length;
+    return res.status(200).json({ total, attributesDistribution, data });
   }
 
   return res.status(400).json({ error: { message: "Invalid address." } });
