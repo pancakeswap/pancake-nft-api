@@ -121,7 +121,9 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
     }
 
     const { data, attributesDistribution } =
-      address === process.env.PANCAKE_BUNNY_ADDRESS ? formatPb(tokens, address) : formatGenericList(tokens, address);
+      address.toLowerCase() === process.env.PANCAKE_BUNNY_ADDRESS?.toLowerCase()
+        ? formatPb(tokens, address)
+        : formatGenericList(tokens, address);
 
     const total = tokens.length;
     return res.status(200).json({ total, attributesDistribution, data });
