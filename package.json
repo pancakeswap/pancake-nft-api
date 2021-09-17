@@ -7,13 +7,17 @@
   "author": "PancakeSwap",
   "license": "GPL-3.0-or-later",
   "scripts": {
+    "dev": "vercel dev",
     "format:check": "prettier --check '*/**/*.{js,ts}'",
     "format:write": "prettier --write '*/**/*.{js,ts}'",
     "lint": "eslint '*/**/*.{js,ts}'",
     "prepare": "husky install"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.173",
+    "dotenv": "^10.0.0",
     "ethers": "^5.4.0",
+    "lodash": "^4.17.21",
     "mongoose": "^5.13.0"
   },
   "devDependencies": {

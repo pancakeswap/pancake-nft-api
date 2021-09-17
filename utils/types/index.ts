@@ -18,6 +18,7 @@ export interface Token extends Document {
   description: string;
   metadata: Metadata;
   attributes: Attribute[];
+  token_id: string;
   created_at: Date;
   updated_at: Date;
 }
