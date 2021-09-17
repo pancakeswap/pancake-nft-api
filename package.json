@@ -7,7 +7,6 @@
   "author": "PancakeSwap",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "dev": "vercel dev",
     "format:check": "prettier --check '*/**/*.{js,ts}'",
     "format:write": "prettier --write '*/**/*.{js,ts}'",
     "lint": "eslint '*/**/*.{js,ts}'",
