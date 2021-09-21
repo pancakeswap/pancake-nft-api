@@ -9,8 +9,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
     return res.status(204).end();
   }
 
-  let { address } = req.query;
-  address = address as string;
+  const address = req.query.address as string;
 
   // Sanity check for address; to avoid any SQL-like injections, ...
   if (address && isAddress(address)) {
@@ -27,10 +26,8 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         .sort({ trait_type: "asc", value: "asc" })
         .exec();
 
-      address = getAddress(address);
-
       const data = {
-        address: address,
+        address: getAddress(collection.address),
         owner: getAddress(collection.owner),
         name: collection.name,
         description: collection?.description,
