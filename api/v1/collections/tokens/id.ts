@@ -47,6 +47,8 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
           webm: null,
           gif: null,
         },
+        createdAt: token.created_at,
+        updatedAt: token.updated_at,
         attributes: token.attributes
           ? token.attributes.map((attribute: Attribute) => ({
               traitType: attribute.trait_type,
