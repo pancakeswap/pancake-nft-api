@@ -1,6 +1,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { isAddress, getAddress } from "ethers/lib/utils";
-import _ from "lodash";
+import reduce from "lodash/reduce";
+import get from "lodash/get";
 import { Collection } from "mongoose";
 import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils";
 import { Attribute, Token } from "../../../../utils/types";
@@ -9,7 +10,7 @@ import { getModel } from "../../../../utils/mongo";
 const formatGenericList = (tokens: Token[], address: string) => {
   let data = {};
   const attributesDistribution: { [key: string]: { [key: string]: number } } = {};
-  tokens.forEach((token) => {
+  tokens.forEach((token: Token) => {
     data = {
       ...data,
       [token.token_id]: {
@@ -45,10 +46,10 @@ const formatGenericList = (tokens: Token[], address: string) => {
       const traitType = attribute.trait_type;
       const traitValue = attribute.value;
       // Safe checks on the object structure
-      if (!_.get(attributesDistribution, traitType)) {
+      if (!get(attributesDistribution, traitType)) {
         attributesDistribution[traitType] = {};
       }
-      if (!_.get(attributesDistribution, [traitType, traitValue])) {
+      if (!get(attributesDistribution, [traitType, traitValue])) {
         attributesDistribution[traitType][traitValue] = 0;
       }
 
@@ -58,19 +59,18 @@ const formatGenericList = (tokens: Token[], address: string) => {
   return { data, attributesDistribution };
 };
 
-const formatPb = (tokens: Token[], address: string) => {
+const formatBunnies = (tokens: Token[], address: string) => {
   let data: { [key: string]: any } = {};
-  tokens.forEach((token) => {
+  tokens.forEach((token: Token) => {
     const bunnyId = token.attributes[0].value;
     const exist = !!data[bunnyId];
 
     if (exist) {
-      data[bunnyId].tokens.push(bunnyId);
+      data[bunnyId].tokens.push(token.token_id);
     } else {
       data = {
         ...data,
         [bunnyId]: {
-          tokenId: token.token_id,
           name: token.metadata.name,
           description: token.metadata.description,
           image: {
@@ -92,7 +92,7 @@ const formatPb = (tokens: Token[], address: string) => {
       };
     }
   }); // End forEach
-  const attributesDistribution = _.reduce(data, (acc, value, index) => ({ ...acc, [index]: value.tokens.length }), {});
+  const attributesDistribution = reduce(data, (acc, value, index) => ({ ...acc, [index]: value.tokens.length }), {});
   return { data, attributesDistribution: attributesDistribution };
 };
 
@@ -122,7 +122,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
 
     const { data, attributesDistribution } =
       address.toLowerCase() === process.env.PANCAKE_BUNNY_ADDRESS?.toLowerCase()
-        ? formatPb(tokens, address)
+        ? formatBunnies(tokens, address)
         : formatGenericList(tokens, address);
 
     const total = tokens.length;
