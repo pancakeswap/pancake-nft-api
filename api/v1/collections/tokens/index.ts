@@ -93,7 +93,7 @@ const formatBunnies = (tokens: Token[], address: string) => {
     }
   }); // End forEach
   const attributesDistribution = reduce(data, (acc, value, index) => ({ ...acc, [index]: value.tokens.length }), {});
-  return { data, attributesDistribution: attributesDistribution };
+  return { data, attributesDistribution: { bunnyId: attributesDistribution } };
 };
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
