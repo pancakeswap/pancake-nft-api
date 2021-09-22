@@ -6,6 +6,7 @@ import { Collection } from "mongoose";
 import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils";
 import { Attribute, Token } from "../../../../utils/types";
 import { getModel } from "../../../../utils/mongo";
+import { paramCase } from "param-case";
 
 const formatGenericList = (tokens: Token[], address: string) => {
   let data = {};
@@ -18,12 +19,12 @@ const formatGenericList = (tokens: Token[], address: string) => {
         name: token.metadata.name,
         description: token.metadata.description,
         image: {
-          original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-            address
-          )}/${token.metadata.name.toLowerCase()}.png`,
-          thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-            address
-          )}/${token.metadata.name.toLowerCase()}.png`,
+          original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+            token.metadata.name
+          )}.png`,
+          thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+            token.metadata.name
+          )}-1000.png`,
           mp4: null,
           webm: null,
           gif: null,
@@ -74,12 +75,12 @@ const formatBunnies = (tokens: Token[], address: string) => {
           name: token.metadata.name,
           description: token.metadata.description,
           image: {
-            original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-              address
-            )}/${token.metadata.name.toLowerCase()}.png`,
-            thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-              address
-            )}/${token.metadata.name.toLowerCase()}.png`,
+            original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+              token.metadata.name
+            )}.png`,
+            thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+              token.metadata.name
+            )}-1000.png`,
             mp4: null,
             webm: null,
             gif: null,

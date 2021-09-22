@@ -17,7 +17,8 @@
     "dotenv": "^10.0.0",
     "ethers": "^5.4.0",
     "lodash": "^4.17.21",
-    "mongoose": "^5.13.0"
+    "mongoose": "^5.13.0",
+    "param-case": "^3.0.4"
   },
   "devDependencies": {
     "@commitlint/cli": "^13.0.0",

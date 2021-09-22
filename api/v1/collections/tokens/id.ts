@@ -4,6 +4,7 @@ import { Attribute, Token } from "../../../../utils/types";
 import { getModel } from "../../../../utils/mongo";
 import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils";
 import { Collection } from "mongoose";
+import { paramCase } from "param-case";
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
   if (req.method?.toUpperCase() === "OPTIONS") {
@@ -37,12 +38,12 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         name: token.metadata.name,
         description: token.metadata.description,
         image: {
-          original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-            address
-          )}/${token.metadata.name.toLowerCase()}.png`,
-          thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-            address
-          )}/${token.metadata.name.toLowerCase()}.png`,
+          original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+            token.metadata.name
+          )}.png`,
+          thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+            token.metadata.name
+          )}-1000.png`,
           mp4: null,
           webm: null,
           gif: null,
