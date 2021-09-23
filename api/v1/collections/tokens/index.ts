@@ -79,27 +79,14 @@ const fetchGeneric = async (collection: Collection) => {
  * @returns
  */
 const fetchPancakeBunnies = async (collection: Collection) => {
-  // Fetch
-  const tokenModel = await getModel("Token");
   const attributeModel = await getModel("Attribute");
-  const attributes: Attribute[] = await attributeModel.find({ parent_collection: collection });
+  const attributes: Attribute[] = await attributeModel
+    .find({ parent_collection: collection })
+    .sort({ value: "asc" })
+    .collation({ locale: "en_US", numericOrdering: true })
+    .exec();
 
-  const promisesAttributesDistribution = attributes.map(async (attribute: Attribute) => {
-    return await tokenModel
-      .aggregate([
-        {
-          $match: {
-            parent_collection: collection._id,
-            attributes: attribute._id,
-          },
-        },
-        {
-          $count: "token_id",
-        },
-      ])
-      .exec();
-  });
-
+  const tokenModel = await getModel("Token");
   const promisesTokens = attributes.map(async (attribute) => {
     const res: Token = await tokenModel
       .findOne({ parent_collection: collection, attributes: attribute })
@@ -130,7 +117,6 @@ const fetchPancakeBunnies = async (collection: Collection) => {
   });
   const tokens = await Promise.all(promisesTokens);
 
-  // Format
   const data: { [key: string]: Token } = attributes.reduce((acc, attribute: Attribute) => {
     const bunnyId = parseInt(attribute.value, 10);
     const token = tokens[bunnyId];
@@ -140,6 +126,19 @@ const fetchPancakeBunnies = async (collection: Collection) => {
     };
   }, {});
 
+  const promisesAttributesDistribution = attributes.map(async (attribute: Attribute) => {
+    return await tokenModel
+      .aggregate([
+        {
+          $match: {
+            parent_collection: collection._id,
+            attributes: attribute._id,
+          },
+        },
+      ])
+      .count("token_id")
+      .exec();
+  });
   const attributesDistribution = await Promise.all(promisesAttributesDistribution);
 
   return {
