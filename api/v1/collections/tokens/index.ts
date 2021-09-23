@@ -145,7 +145,7 @@ const fetchPancakeBunnies = async (collection: Collection) => {
   return {
     data,
     attributesDistribution: attributesDistribution.reduce(
-      (acc, value, index) => ({ ...acc, [index]: value[0] ? value[0].token_id : null }),
+      (acc, value, index) => ({ ...acc, [index]: value[0] ? value[0].token_id : 0 }),
       {}
     ),
   };
