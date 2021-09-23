@@ -101,7 +101,7 @@ const fetchPancakeBunnies = async (collection: Collection) => {
   });
 
   const promisesTokens = attributes.map(async (attribute) => {
-    const res = await tokenModel
+    const res: Token = await tokenModel
       .findOne({ parent_collection: collection, attributes: attribute })
       .populate(["metadata", "attributes"])
       .exec();
