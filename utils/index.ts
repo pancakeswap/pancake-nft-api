@@ -2,7 +2,7 @@ import { getAddress } from "ethers/lib/utils";
 import dotenv from "dotenv";
 dotenv.config();
 
-export const NETWORK = process.env.NETWORK ?? "testnet";
+export const NETWORK = process.env.NETWORK ?? "mainnet";
 export const CONTENT_DELIVERY_NETWORK_URI =
   process.env.CONTENT_DELIVERY_NETWORK_URI ?? "https://static-nft.pancakeswap.com";
 
