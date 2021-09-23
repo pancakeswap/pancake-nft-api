@@ -84,7 +84,7 @@ const fetchPancakeBunnies = async (collection: Collection) => {
   const attributeModel = await getModel("Attribute");
   const attributes: Attribute[] = await attributeModel.find({ parent_collection: collection });
 
-  const promisesAttributesDistribution = attributes.map(async (attribute) => {
+  const promisesAttributesDistribution = attributes.map(async (attribute: Attribute) => {
     return await tokenModel
       .aggregate([
         {
