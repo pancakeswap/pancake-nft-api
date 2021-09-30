@@ -31,7 +31,7 @@ const collectionSchema: Schema = new Schema(
     },
     verified: {
       type: Boolean,
-      defaukt: false,
+      default: false,
     },
     created_at: {
       type: Date,

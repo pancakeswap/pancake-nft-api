@@ -106,9 +106,15 @@ const fetchPancakeBunnies = async (collection: Collection) => {
         thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
           PANCAKE_BUNNY_ADDRESS
         )}/${metaName}-1000.png`,
-        mp4: null,
-        webm: null,
-        gif: null,
+        mp4: res.metadata.mp4
+          ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(PANCAKE_BUNNY_ADDRESS)}/${metaName}.mp4`
+          : null,
+        webm: res.metadata.webm
+          ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(PANCAKE_BUNNY_ADDRESS)}/${metaName}.webm`
+          : null,
+        gif: res.metadata.gif
+          ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(PANCAKE_BUNNY_ADDRESS)}/${metaName}.gif`
+          : null,
       },
       collection: {
         name: collection.name,

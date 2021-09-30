@@ -14,6 +14,18 @@ const metadataSchema: Schema = new Schema(
       type: String,
       required: true,
     },
+    mp4: {
+      type: Boolean,
+      default: false,
+    },
+    webm: {
+      type: Boolean,
+      default: false,
+    },
+    gif: {
+      type: Boolean,
+      default: false,
+    },
     created_at: {
       type: Date,
       default: Date.now,

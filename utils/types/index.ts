@@ -27,6 +27,9 @@ export interface Metadata extends Document {
   parent_collection: Collection;
   name: string;
   description: string;
+  mp4: boolean;
+  webm: boolean;
+  gif: boolean;
   created_at: Date;
   updated_at: Date;
 }

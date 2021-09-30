@@ -82,9 +82,21 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
             thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
               token.metadata.name
             )}-1000.png`,
-            mp4: null,
-            webm: null,
-            gif: null,
+            mp4: token.metadata.mp4
+              ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+                  token.metadata.name
+                )}.mp4`
+              : null,
+            webm: token.metadata.webm
+              ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+                  token.metadata.name
+                )}.webm`
+              : null,
+            gif: token.metadata.gif
+              ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+                  token.metadata.name
+                )}.gif`
+              : null,
           },
           createdAt: token.created_at,
           updatedAt: token.updated_at,
