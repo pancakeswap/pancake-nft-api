@@ -14,11 +14,10 @@ export interface Collection extends Document {
 
 export interface Token extends Document {
   parent_collection: Collection;
-  name: string;
-  description: string;
+  token_id: string;
   metadata: Metadata;
   attributes: Attribute[];
-  token_id: string;
+  burned: boolean;
   created_at: Date;
   updated_at: Date;
 }

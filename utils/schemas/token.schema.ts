@@ -20,6 +20,10 @@ const tokenSchema: Schema = new Schema(
         ref: "Attribute",
       },
     ],
+    burned: {
+      type: Boolean,
+      default: false,
+    },
     created_at: {
       type: Date,
       default: Date.now,

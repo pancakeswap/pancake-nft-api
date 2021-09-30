@@ -139,6 +139,7 @@ const fetchPancakeBunnies = async (collection: Collection) => {
           $match: {
             parent_collection: collection._id,
             attributes: attribute._id,
+            burned: false,
           },
         },
       ])
