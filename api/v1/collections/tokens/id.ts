@@ -1,10 +1,9 @@
 import { Contract } from "@ethersproject/contracts";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { getAddress, isAddress } from "ethers/lib/utils";
-import { Attribute, Token } from "../../../../utils/types";
+import { Attribute, Collection, Token } from "../../../../utils/types";
 import { getModel } from "../../../../utils/mongo";
 import { CONTENT_DELIVERY_NETWORK_URI, getTokenURI, NETWORK } from "../../../../utils";
-import { Collection } from "mongoose";
 import { paramCase } from "param-case";
 import axios from "axios";
 import provider from "../../../../utils/provider";
