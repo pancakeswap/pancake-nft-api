@@ -14,11 +14,13 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.173",
+    "@types/mongoose-paginate-v2": "^1.4.0",
     "axios": "^0.21.4",
     "dotenv": "^10.0.0",
     "ethers": "^5.4.0",
     "lodash": "^4.17.21",
     "mongoose": "^5.13.0",
+    "mongoose-paginate-v2": "^1.4.2",
     "param-case": "^3.0.4"
   },
   "devDependencies": {

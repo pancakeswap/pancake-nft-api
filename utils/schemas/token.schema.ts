@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import paginatePlugin from "mongoose-paginate-v2";
 
 const tokenSchema: Schema = new Schema(
   {
@@ -36,6 +37,6 @@ const tokenSchema: Schema = new Schema(
   {
     collection: "tokens",
   }
-);
+).plugin(paginatePlugin);
 
 export default tokenSchema;

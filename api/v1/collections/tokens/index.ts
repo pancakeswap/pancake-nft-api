@@ -13,18 +13,22 @@ const PANCAKE_BUNNY_ADDRESS = process.env.PANCAKE_BUNNY_ADDRESS as string;
  * @param collection
  * @returns
  */
-const fetchGeneric = async (collection: Collection) => {
-  // Fetch
+const fetchGeneric = async (collection: Collection, page: number, size: number) => {
   const tokenModel = await getModel("Token");
-  const tokens: Token[] = await tokenModel
-    .find({ parent_collection: collection })
-    .populate(["parent_collection", "metadata", "attributes"])
-    .exec();
+  const tokens = await tokenModel.paginate(
+    { parent_collection: collection },
+    {
+      page: page,
+      limit: size,
+      sort: { token_id: "asc" },
+      populate: ["metadata", "attributes"],
+      collation: { locale: "en_US", numericOrdering: true },
+    }
+  );
 
-  // Format
   let data = {};
   const attributesDistribution: { [key: string]: { [key: string]: number } } = {};
-  tokens.forEach((token: Token) => {
+  tokens.docs.forEach((token: Token) => {
     const metaName = paramCase(token.metadata.name);
     data = {
       ...data,
@@ -37,9 +41,15 @@ const fetchGeneric = async (collection: Collection) => {
           thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
             collection.address
           )}/${metaName}-1000.png`,
-          mp4: null,
-          webm: null,
-          gif: null,
+          mp4: token.metadata.mp4
+            ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${metaName}.mp4`
+            : null,
+          webm: token.metadata.webm
+            ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${metaName}.webm`
+            : null,
+          gif: token.metadata.gif
+            ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${metaName}.gif`
+            : null,
         },
         attributes: token.attributes
           ? token.attributes.map((attribute: Attribute) => ({
@@ -49,7 +59,7 @@ const fetchGeneric = async (collection: Collection) => {
             }))
           : [],
         collection: {
-          name: token.parent_collection.name,
+          name: collection.name,
         },
       },
     };
@@ -68,7 +78,7 @@ const fetchGeneric = async (collection: Collection) => {
 
       attributesDistribution[traitType][traitValue] += 1;
     });
-  }); // End forEach
+  });
 
   return { data, attributesDistribution };
 };
@@ -175,13 +185,17 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
     const { data, attributesDistribution } =
       address.toLowerCase() === PANCAKE_BUNNY_ADDRESS?.toLowerCase()
         ? await fetchPancakeBunnies(collection)
-        : await fetchGeneric(collection);
+        : await fetchGeneric(
+            collection,
+            req.query.page ? parseInt(req.query.page as string, 10) : 1,
+            req.query.size ? parseInt(req.query.size as string, 10) : 10000
+          );
 
     const total = Object.keys(data).length;
     if (total === 0) {
       return res.status(404).json({ error: { message: "Entity not found." } });
     }
-    return res.status(200).json({ attributesDistribution, data, total });
+    return res.status(200).json({ attributesDistribution, total, data });
   }
 
   return res.status(400).json({ error: { message: "Invalid address." } });
