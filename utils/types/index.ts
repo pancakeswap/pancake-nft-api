@@ -8,6 +8,7 @@ export interface Collection extends Document {
   symbol: string;
   total_supply: number;
   verified: boolean;
+  visible: boolean;
   created_at: Date;
   updated_at: Date;
 }
