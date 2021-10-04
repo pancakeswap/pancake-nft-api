@@ -18,6 +18,10 @@
       "destination": "/api/v1/collections/address"
     },
     {
+      "source": "/api/v1/collections/:address/distribution",
+      "destination": "/api/v1/collections/distribution"
+    },
+    {
       "source": "/api/v1/collections/:address/tokens",
       "destination": "/api/v1/collections/tokens"
     },
