@@ -11,7 +11,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
 
   try {
     const collectionModel = await getModel("Collection");
-    const collections: Collection[] = await collectionModel.find().sort({ updated_at: "desc" }).exec();
+    const collections: Collection[] = await collectionModel.find({ visible: true }).sort({ updated_at: "desc" }).exec();
 
     const data = collections.map((collection: Collection) => ({
       address: getAddress(collection.address),

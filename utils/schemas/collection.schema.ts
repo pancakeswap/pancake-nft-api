@@ -33,6 +33,10 @@ const collectionSchema: Schema = new Schema(
       type: Boolean,
       default: false,
     },
+    visible: {
+      type: Boolean,
+      default: false,
+    },
     created_at: {
       type: Date,
       default: Date.now,
