@@ -26,6 +26,10 @@
       "destination": "/api/v1/collections/tokens"
     },
     {
+      "source": "/api/v1/collections/:address/filter",
+      "destination": "/api/v1/collections/tokens/filter"
+    },
+    {
       "source": "/api/v1/collections/:address/tokens/:id",
       "destination": "/api/v1/collections/tokens/id"
     }

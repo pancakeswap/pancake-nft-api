@@ -33,8 +33,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         .populate(["parent_collection", "metadata", "attributes"])
         .exec();
       if (!token) {
-        // TO-DO: Implement an on-the-fly logic to get a token data related to a collection from its `tokenURI`.
-        const contract = new Contract(address, ercABI, provider);
+        const contract = new Contract(collection.address, ercABI, provider);
         const tokenURI = await contract.tokenURI(id);
 
         const response = await axios(getTokenURI(tokenURI));
@@ -44,10 +43,10 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
           name: response.data.name,
           description: response.data.description,
           image: {
-            original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+            original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
               response.data.name
             )}.png`,
-            thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+            thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
               response.data.name
             )}-1000.png`,
             mp4: null,
@@ -75,24 +74,24 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
           name: token.metadata.name,
           description: token.metadata.description,
           image: {
-            original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+            original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
               token.metadata.name
             )}.png`,
-            thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+            thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
               token.metadata.name
             )}-1000.png`,
             mp4: token.metadata.mp4
-              ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+              ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
                   token.metadata.name
                 )}.mp4`
               : null,
             webm: token.metadata.webm
-              ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+              ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
                   token.metadata.name
                 )}.webm`
               : null,
             gif: token.metadata.gif
-              ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(address)}/${paramCase(
+              ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
                   token.metadata.name
                 )}.gif`
               : null,
