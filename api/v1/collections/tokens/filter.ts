@@ -48,13 +48,19 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         .exec();
 
       const tokenModel = await getModel("Token");
-      const tokens: Token[] = await tokenModel
-        .find({ parent_collection: collection, attributes: { $all: attributes.map((obj) => obj._id) } })
-        .populate(["metadata", "attributes"])
-        .exec();
+      const tokens = await tokenModel.paginate(
+        { parent_collection: collection, attributes: { $all: attributes.map((obj) => obj._id) } },
+        {
+          page: req.query.page ? parseInt(req.query.page as string, 10) : 1,
+          limit: req.query.size ? parseInt(req.query.size as string, 10) : 10000,
+          sort: { token_id: "asc" },
+          populate: ["metadata", "attributes"],
+          collation: { locale: "en_US", numericOrdering: true },
+        }
+      );
 
       let data = {};
-      tokens.forEach((token: Token) => {
+      tokens.docs.forEach((token: Token) => {
         const metaName = paramCase(token.metadata.name);
         data = {
           ...data,
@@ -91,7 +97,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         };
       });
 
-      return res.status(200).json({ total: Object.keys(data).length, data });
+      return res.status(200).json({ total: tokens.totalDocs, data });
     } catch (error) {
       return res.status(500).json({ error: { message: "Unknown error." } });
     }
