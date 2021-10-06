@@ -28,8 +28,8 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         if (["address", "page", "size"].includes(key)) return;
 
         const search = {
-          trait_type: key.toLowerCase(),
-          value: (value as string).toLowerCase(),
+          trait_type: key,
+          value: value as string,
         };
 
         filterQuery.push(search);
