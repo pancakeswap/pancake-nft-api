@@ -64,5 +64,11 @@
         }
       ]
     }
-  ]
+  ],
+  "functions": {
+    "api/v1/collections/tokens/filter.ts": {
+      "memory": 3008,
+      "maxDuration": 60
+    }
+  }
 }
