@@ -52,7 +52,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         { parent_collection: collection, attributes: { $all: attributes.map((obj) => obj._id) } },
         {
           page: req.query.page ? parseInt(req.query.page as string, 10) : 1,
-          limit: req.query.size ? parseInt(req.query.size as string, 10) : 10000,
+          limit: req.query.size ? parseInt(req.query.size as string, 10) : 1000,
           sort: { token_id: "asc" },
           populate: ["metadata", "attributes"],
           collation: { locale: "en_US", numericOrdering: true },
