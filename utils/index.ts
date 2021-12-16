@@ -8,7 +8,7 @@ export const CONTENT_DELIVERY_NETWORK_URI =
 
 export const getTokenURI = (tokenURI: string): string => {
   if (tokenURI && tokenURI.startsWith("ipfs://")) {
-    return `https://ipfs.io/ipfs/${tokenURI.replaceAll("ipfs://", "")}`;
+    return `https://ipfs.io/ipfs/${tokenURI.split("ipfs://").join("")}`;
   }
 
   return tokenURI;
