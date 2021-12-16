@@ -32,6 +32,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
 
     return res.status(200).json({ total: data.length, data });
   } catch (error) {
+    console.log({ error });
     return res.status(500).json({ error: { message: "Unknown error." } });
   }
 };
