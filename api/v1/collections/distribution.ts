@@ -1,10 +1,8 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { isAddress, getAddress } from "ethers/lib/utils";
+import { isAddress } from "ethers/lib/utils";
 import get from "lodash/get";
-import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../utils";
 import { Attribute, Token, Collection } from "../../../utils/types";
 import { getModel } from "../../../utils/mongo";
-import { paramCase } from "param-case";
 
 const PANCAKE_BUNNY_ADDRESS = process.env.PANCAKE_BUNNY_ADDRESS as string;
 
@@ -15,44 +13,10 @@ const PANCAKE_BUNNY_ADDRESS = process.env.PANCAKE_BUNNY_ADDRESS as string;
  */
 const fetchGeneric = async (collection: Collection) => {
   const tokenModel = await getModel("Token");
-  const tokens: Token[] = await tokenModel
-    .find({ parent_collection: collection })
-    .populate(["parent_collection", "metadata", "attributes"])
-    .exec();
+  const tokens: Token[] = await tokenModel.find({ parent_collection: collection }).populate(["attributes"]).exec();
 
-  // Format
-  let data = {};
   const attributesDistribution: { [key: string]: { [key: string]: number } } = {};
   tokens.forEach((token: Token) => {
-    const metaName = paramCase(token.metadata.name);
-    data = {
-      ...data,
-      [token.token_id]: {
-        tokenId: token.token_id,
-        name: token.metadata.name,
-        description: token.metadata.description,
-        image: {
-          original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${metaName}.png`,
-          thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-            collection.address
-          )}/${metaName}-1000.png`,
-          mp4: null,
-          webm: null,
-          gif: null,
-        },
-        attributes: token.attributes
-          ? token.attributes.map((attribute: Attribute) => ({
-              traitType: attribute.trait_type,
-              value: attribute.value,
-              displayType: attribute.display_type,
-            }))
-          : [],
-        collection: {
-          name: token.parent_collection.name,
-        },
-      },
-    };
-
     // update the attributesDistribution distribution according to this token attributes
     token.attributes.forEach((attribute) => {
       const traitType = attribute.trait_type;
@@ -67,9 +31,9 @@ const fetchGeneric = async (collection: Collection) => {
 
       attributesDistribution[traitType][traitValue] += 1;
     });
-  }); // End forEach
+  });
 
-  return { data, attributesDistribution };
+  return { attributesDistribution };
 };
 
 /**
