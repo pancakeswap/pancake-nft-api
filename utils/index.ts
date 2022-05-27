@@ -8,10 +8,10 @@ export const CONTENT_DELIVERY_NETWORK_URI =
 
 export const getTokenURI = (tokenURI: string): string => {
   if (tokenURI && tokenURI.startsWith("ipfs://")) {
-    return `https://ipfs.io/ipfs/${tokenURI.split("ipfs://").join("")}`;
+    return `https://ipfs.io/ipfs/${tokenURI.split("ipfs://").join("").trim()}`;
   }
 
-  return tokenURI;
+  return tokenURI.trim();
 };
 
 export const getCDN = (address: string, type: "avatar" | "banner-lg" | "banner-sm"): string => {
