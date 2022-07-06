@@ -15,7 +15,12 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
   if (address && isAddress(address)) {
     try {
       const collectionModel = await getModel("Collection");
-      const collection: Collection = await collectionModel.findOne({ address: address.toLowerCase() }).exec();
+      const collection: Collection = await collectionModel
+        .findOne({
+          address: address.toLowerCase(),
+          visible: true,
+        })
+        .exec();
       if (!collection) {
         return res.status(404).json({ error: { message: "Entity not found." } });
       }
