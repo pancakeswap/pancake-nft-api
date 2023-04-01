@@ -36,6 +36,10 @@
     {
       "source": "/v3/:tokenId",
       "destination": "https://assets.pancakeswap.finance/web/nft/v3-placeholder.png"
+    },
+    {
+      "source": "/v3/:chainId/:tokenId",
+      "destination": "https://assets.pancakeswap.finance/web/nft/v3-placeholder.png"
     }
   ],
   "headers": [
