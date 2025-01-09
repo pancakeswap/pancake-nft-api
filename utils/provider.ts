@@ -3,7 +3,7 @@ import sample from "lodash/sample";
 import { NETWORK } from ".";
 
 const MAINNET_RPC = [
-  "https://bsc-dataseed.binance.org/",
+  "https://bsc-dataseed1.binance.org/",
   "https://bsc-dataseed1.defibit.io/",
   "https://bsc-dataseed1.ninicoin.io/",
 ];
