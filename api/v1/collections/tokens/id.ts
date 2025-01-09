@@ -35,7 +35,11 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         const contract = new Contract(collection.address, ercABI, provider);
         const tokenURI = await contract.tokenURI(id);
 
-        const response = await axios(getTokenURI(tokenURI));
+        const response = await axios.get(getTokenURI(tokenURI), {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+          },
+        });
 
         const data = {
           tokenId: id,
