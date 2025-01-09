@@ -34,7 +34,7 @@
     "@types/node": "^18.0.5",
     "@typescript-eslint/eslint-plugin": "^4.28.0",
     "@typescript-eslint/parser": "^4.28.0",
-    "@vercel/node": "^1.11.1",
+    "@vercel/node": "^5.0.2",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
     "husky": "^7.0.0",
