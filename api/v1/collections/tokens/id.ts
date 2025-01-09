@@ -2,11 +2,13 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import { getAddress, isAddress, Contract } from "ethers";
 import { paramCase } from "param-case";
 import axios from "axios";
-import ercABI from "../../../../utils/abis/ERC721.json" assert { type: "json" };
+import { readFileSync } from "fs";
 import { Attribute, Collection, Token } from "../../../../utils/types/index.js";
 import { getModel } from "../../../../utils/mongo.js";
 import { CONTENT_DELIVERY_NETWORK_URI, getTokenURI, NETWORK } from "../../../../utils/index.js";
 import provider from "../../../../utils/provider.js";
+
+const ercABI = JSON.parse(readFileSync(new URL("../../../../utils/abis/ERC721.json", import.meta.url), "utf-8"));
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
   if (req.method?.toUpperCase() === "OPTIONS") {
