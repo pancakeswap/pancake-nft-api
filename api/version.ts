@@ -1,6 +1,6 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { version } from "../package.json";
+import packageJson from "../package.json";
 
 export default (req: VercelRequest, res: VercelResponse): void => {
-  res.json({ version });
+  res.json({ version: packageJson.version });
 };

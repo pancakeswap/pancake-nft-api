@@ -1,6 +1,6 @@
-import { providers } from "ethers";
-import sample from "lodash/sample";
-import { NETWORK } from ".";
+import { JsonRpcProvider } from "ethers";
+import lodash from "lodash";
+import { NETWORK } from "./index.js";
 
 const MAINNET_RPC = [
   "https://bsc-dataseed1.binance.org/",
@@ -15,6 +15,6 @@ const TESTNET_RPC = [
   "https://data-seed-prebsc-2-s2.binance.org:8545/",
 ];
 
-const provider = new providers.JsonRpcProvider(NETWORK === "testnet" ? sample(TESTNET_RPC) : sample(MAINNET_RPC));
+const provider = new JsonRpcProvider(NETWORK === "testnet" ? lodash.sample(TESTNET_RPC) : lodash.sample(MAINNET_RPC));
 
 export default provider;

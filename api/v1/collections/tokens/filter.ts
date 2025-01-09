@@ -1,10 +1,10 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { getAddress, isAddress } from "ethers/lib/utils";
+import { getAddress, isAddress } from "ethers";
 import { paramCase } from "param-case";
-import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils";
-import { getModel } from "../../../../utils/mongo";
-import { Attribute, Collection, Token } from "../../../../utils/types";
-import forEach from "lodash/forEach";
+import lodash from "lodash";
+import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils/index.js";
+import { getModel } from "../../../../utils/mongo.js";
+import { Attribute, Collection, Token } from "../../../../utils/types/index.js";
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
   if (req.method?.toUpperCase() === "OPTIONS") {
@@ -23,7 +23,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
       }
 
       const filterQuery: { trait_type: string; value: string }[] = [];
-      forEach(req.query, (value, key) => {
+      lodash.forEach(req.query, (value, key) => {
         // Note: With URL rewrite enabled, 'address' is part of the parameters, so excluding when building the filter.
         if (["address", "page", "size"].includes(key)) return;
 
@@ -56,7 +56,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
           sort: { token_id: "asc" },
           populate: ["metadata", "attributes"],
           collation: { locale: "en_US", numericOrdering: true },
-        }
+        },
       );
 
       let data = {};
@@ -71,7 +71,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
             image: {
               original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${metaName}.png`,
               thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-                collection.address
+                collection.address,
               )}/${metaName}-1000.png`,
               mp4: token.metadata.mp4
                 ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${metaName}.mp4`

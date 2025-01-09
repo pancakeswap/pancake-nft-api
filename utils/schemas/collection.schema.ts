@@ -1,6 +1,6 @@
-import { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const collectionSchema: Schema = new Schema(
+const collectionSchema = new mongoose.Schema(
   {
     address: {
       type: String,
@@ -48,7 +48,7 @@ const collectionSchema: Schema = new Schema(
   },
   {
     collection: "collections",
-  }
+  },
 );
 
 export default collectionSchema;

@@ -1,6 +1,6 @@
-import { Document } from "mongoose";
+import mongoose from "mongoose";
 
-export interface Collection extends Document {
+export interface Collection extends mongoose.Document {
   address: string;
   owner: string;
   name: string;
@@ -13,7 +13,7 @@ export interface Collection extends Document {
   updated_at: Date;
 }
 
-export interface Token extends Document {
+export interface Token extends mongoose.Document {
   parent_collection: Collection;
   token_id: string;
   metadata: Metadata;
@@ -23,7 +23,7 @@ export interface Token extends Document {
   updated_at: Date;
 }
 
-export interface Metadata extends Document {
+export interface Metadata extends mongoose.Document {
   parent_collection: Collection;
   name: string;
   description: string;
@@ -34,7 +34,7 @@ export interface Metadata extends Document {
   updated_at: Date;
 }
 
-export interface Attribute extends Document {
+export interface Attribute extends mongoose.Document {
   parent_collection: Collection;
   trait_type: string;
   value: string;

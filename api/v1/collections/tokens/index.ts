@@ -1,10 +1,10 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { isAddress, getAddress } from "ethers/lib/utils";
-import get from "lodash/get";
-import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils";
-import { Attribute, Token, Collection } from "../../../../utils/types";
-import { getModel } from "../../../../utils/mongo";
+import { isAddress, getAddress } from "ethers";
+import lodash from "lodash";
 import { paramCase } from "param-case";
+import { CONTENT_DELIVERY_NETWORK_URI, NETWORK } from "../../../../utils/index.js";
+import { Attribute, Token, Collection } from "../../../../utils/types/index.js";
+import { getModel } from "../../../../utils/mongo.js";
 
 const PANCAKE_BUNNY_ADDRESS = process.env.PANCAKE_BUNNY_ADDRESS as string;
 
@@ -23,7 +23,7 @@ const fetchGeneric = async (collection: Collection, page: number, size: number) 
       sort: { token_id: "asc" },
       populate: ["metadata", "attributes"],
       collation: { locale: "en_US", numericOrdering: true },
-    }
+    },
   );
 
   let data = {};
@@ -39,7 +39,7 @@ const fetchGeneric = async (collection: Collection, page: number, size: number) 
         image: {
           original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${metaName}.png`,
           thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-            collection.address
+            collection.address,
           )}/${metaName}-1000.png`,
           mp4: token.metadata.mp4
             ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${metaName}.mp4`
@@ -69,10 +69,10 @@ const fetchGeneric = async (collection: Collection, page: number, size: number) 
       const traitType = attribute.trait_type;
       const traitValue = attribute.value;
       // Safe checks on the object structure
-      if (!get(attributesDistribution, traitType)) {
+      if (!lodash.get(attributesDistribution, traitType)) {
         attributesDistribution[traitType] = {};
       }
-      if (!get(attributesDistribution, [traitType, traitValue])) {
+      if (!lodash.get(attributesDistribution, [traitType, traitValue])) {
         attributesDistribution[traitType][traitValue] = 0;
       }
 
@@ -114,7 +114,7 @@ const fetchPancakeBunnies = async (collection: Collection) => {
       image: {
         original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(PANCAKE_BUNNY_ADDRESS)}/${metaName}.png`,
         thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(
-          PANCAKE_BUNNY_ADDRESS
+          PANCAKE_BUNNY_ADDRESS,
         )}/${metaName}-1000.png`,
         mp4: res.metadata.mp4
           ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(PANCAKE_BUNNY_ADDRESS)}/${metaName}.mp4`
@@ -162,7 +162,7 @@ const fetchPancakeBunnies = async (collection: Collection) => {
     data,
     attributesDistribution: attributesDistribution.reduce(
       (acc, value, index) => ({ ...acc, [index]: value[0] ? value[0].token_id : 0 }),
-      {}
+      {},
     ),
   };
 };
@@ -188,7 +188,7 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
         : await fetchGeneric(
             collection,
             req.query.page ? parseInt(req.query.page as string, 10) : 1,
-            req.query.size ? parseInt(req.query.size as string, 10) : 10000
+            req.query.size ? parseInt(req.query.size as string, 10) : 10000,
           );
 
     const total = Object.keys(data).length;

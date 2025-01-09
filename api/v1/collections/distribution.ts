@@ -1,8 +1,8 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { isAddress } from "ethers/lib/utils";
-import get from "lodash/get";
-import { Attribute, Token, Collection } from "../../../utils/types";
-import { getModel } from "../../../utils/mongo";
+import { isAddress } from "ethers";
+import lodash from "lodash";
+import { Attribute, Token, Collection } from "../../../utils/types/index.js";
+import { getModel } from "../../../utils/mongo.js";
 
 const PANCAKE_BUNNY_ADDRESS = process.env.PANCAKE_BUNNY_ADDRESS as string;
 
@@ -22,10 +22,10 @@ const fetchGeneric = async (collection: Collection) => {
       const traitType = attribute.trait_type;
       const traitValue = attribute.value;
       // Safe checks on the object structure
-      if (!get(attributesDistribution, traitType)) {
+      if (!lodash.get(attributesDistribution, traitType)) {
         attributesDistribution[traitType] = {};
       }
-      if (!get(attributesDistribution, [traitType, traitValue])) {
+      if (!lodash.get(attributesDistribution, [traitType, traitValue])) {
         attributesDistribution[traitType][traitValue] = 0;
       }
 
@@ -69,7 +69,7 @@ const fetchPancakeBunnies = async (collection: Collection) => {
   return {
     attributesDistribution: attributesDistribution.reduce(
       (acc, value, index) => ({ ...acc, [index]: value[0] ? value[0].token_id : 0 }),
-      {}
+      {},
     ),
   };
 };

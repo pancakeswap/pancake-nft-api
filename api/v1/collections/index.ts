@@ -1,8 +1,8 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { getAddress } from "ethers/lib/utils";
-import { getCDN } from "../../../utils";
-import { getModel } from "../../../utils/mongo";
-import { Collection } from "../../../utils/types";
+import { getAddress } from "ethers";
+import { getCDN } from "../../../utils/index.js";
+import { getModel } from "../../../utils/mongo.js";
+import { Collection } from "../../../utils/types/index.js";
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
   if (req.method?.toUpperCase() === "OPTIONS") {

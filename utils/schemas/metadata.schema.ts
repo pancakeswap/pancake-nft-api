@@ -1,9 +1,9 @@
-import { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const metadataSchema: Schema = new Schema(
+const metadataSchema = new mongoose.Schema(
   {
     parent_collection: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Collection",
     },
     name: {
@@ -37,7 +37,7 @@ const metadataSchema: Schema = new Schema(
   },
   {
     collection: "metadata",
-  }
+  },
 );
 
 export default metadataSchema;

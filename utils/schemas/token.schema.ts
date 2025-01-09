@@ -1,10 +1,10 @@
-import { Schema } from "mongoose";
+import mongoose from "mongoose";
 import paginatePlugin from "mongoose-paginate-v2";
 
-const tokenSchema: Schema = new Schema(
+const tokenSchema = new mongoose.Schema(
   {
     parent_collection: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Collection",
     },
     token_id: {
@@ -12,12 +12,12 @@ const tokenSchema: Schema = new Schema(
       required: true,
     },
     metadata: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Metadata",
     },
     attributes: [
       {
-        type: Schema.Types.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: "Attribute",
       },
     ],
@@ -36,7 +36,7 @@ const tokenSchema: Schema = new Schema(
   },
   {
     collection: "tokens",
-  }
+  },
 ).plugin(paginatePlugin);
 
 export default tokenSchema;

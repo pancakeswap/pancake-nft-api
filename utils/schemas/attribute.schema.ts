@@ -1,9 +1,9 @@
-import { Schema } from "mongoose";
+import mongoose from "mongoose";
 
-const attributeSchema: Schema = new Schema(
+const attributeSchema = new mongoose.Schema(
   {
     parent_collection: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Collection",
     },
     trait_type: {
@@ -29,7 +29,7 @@ const attributeSchema: Schema = new Schema(
   },
   {
     collection: "attributes",
-  }
+  },
 );
 
 export default attributeSchema;

@@ -1,4 +1,4 @@
-import { getAddress } from "ethers/lib/utils";
+import { getAddress } from "ethers";
 import dotenv from "dotenv";
 dotenv.config();
 

@@ -1,13 +1,12 @@
-import { Contract } from "@ethersproject/contracts";
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { getAddress, isAddress } from "ethers/lib/utils";
-import { Attribute, Collection, Token } from "../../../../utils/types";
-import { getModel } from "../../../../utils/mongo";
-import { CONTENT_DELIVERY_NETWORK_URI, getTokenURI, NETWORK } from "../../../../utils";
+import { getAddress, isAddress, Contract } from "ethers";
 import { paramCase } from "param-case";
 import axios from "axios";
-import provider from "../../../../utils/provider";
-import ercABI from "../../../../utils/abis/ERC721.json";
+import ercABI from "../../../../utils/abis/ERC721.json" assert { type: "json" };
+import { Attribute, Collection, Token } from "../../../../utils/types/index.js";
+import { getModel } from "../../../../utils/mongo.js";
+import { CONTENT_DELIVERY_NETWORK_URI, getTokenURI, NETWORK } from "../../../../utils/index.js";
+import provider from "../../../../utils/provider.js";
 
 export default async (req: VercelRequest, res: VercelResponse): Promise<VercelResponse | void> => {
   if (req.method?.toUpperCase() === "OPTIONS") {
@@ -44,24 +43,24 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
           description: response.data.description,
           image: {
             original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-              response.data.name
+              response.data.name,
             )}.png`,
             thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-              response.data.name
+              response.data.name,
             )}-1000.png`,
             mp4: response.data.mp4_url
               ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-                  response.data.name
+                  response.data.name,
                 )}.mp4`
               : null,
             webm: response.data.webm_url
               ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-                  response.data.name
+                  response.data.name,
                 )}.webm`
               : null,
             gif: response.data.gif_url
               ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-                  response.data.name
+                  response.data.name,
                 )}.gif`
               : null,
           },
@@ -87,24 +86,24 @@ export default async (req: VercelRequest, res: VercelResponse): Promise<VercelRe
           description: token.metadata.description,
           image: {
             original: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-              token.metadata.name
+              token.metadata.name,
             )}.png`,
             thumbnail: `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-              token.metadata.name
+              token.metadata.name,
             )}-1000.png`,
             mp4: token.metadata.mp4
               ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-                  token.metadata.name
+                  token.metadata.name,
                 )}.mp4`
               : null,
             webm: token.metadata.webm
               ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-                  token.metadata.name
+                  token.metadata.name,
                 )}.webm`
               : null,
             gif: token.metadata.gif
               ? `${CONTENT_DELIVERY_NETWORK_URI}/${NETWORK}/${getAddress(collection.address)}/${paramCase(
-                  token.metadata.name
+                  token.metadata.name,
                 )}.gif`
               : null,
           },
